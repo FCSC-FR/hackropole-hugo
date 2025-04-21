@@ -219,6 +219,8 @@ avr = "AVR"
 risc-v = "RISC-V"
 docker = "docker"
 blind = "blind"
+iOS = "iOS"
+javascript = "javascript"
 
 # description is a reserved keyword
 [description]
