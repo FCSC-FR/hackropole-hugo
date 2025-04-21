@@ -221,6 +221,7 @@ docker = "docker"
 blind = "blind"
 iOS = "iOS"
 javascript = "javascript"
+VM = "VM"
 
 # description is a reserved keyword
 [description]
