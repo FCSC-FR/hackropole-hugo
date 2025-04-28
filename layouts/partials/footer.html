@@ -26,12 +26,9 @@
         <div class="h5">{{- i18n "statistics" | title -}}</div>
         <ul class="list-unstyled text-small">
           <li><a class="text-decoration-none" href='{{ relLangURL "/statistics/" }}'>{{ .Site.Title }}</a></li>
-          <li><a class="text-decoration-none" href='{{ relLangURL "/ranking/fcsc2024/" }}'>FCSC 2024</a></li>
-          <li><a class="text-decoration-none" href='{{ relLangURL "/ranking/fcsc2023/" }}'>FCSC 2023</a></li>
-          <li><a class="text-decoration-none" href='{{ relLangURL "/ranking/fcsc2022/" }}'>FCSC 2022</a></li>
-          <li><a class="text-decoration-none" href='{{ relLangURL "/ranking/fcsc2021/" }}'>FCSC 2021</a></li>
-          <li><a class="text-decoration-none" href='{{ relLangURL "/ranking/fcsc2020/" }}'>FCSC 2020</a></li>
-          <li><a class="text-decoration-none" href='{{ relLangURL "/ranking/fcsc2019/" }}'>FCSC 2019</a></li>
+          {{ range sort (where site.RegularPages "Type" "ranking") ".Date" "desc" }}
+          <li><a class="text-decoration-none" href='{{ .RelPermalink }}'>{{ .LinkTitle }}</a></li>
+          {{ end }}
         </ul>
       </div>
       <div class="col-6 col-md d-print-none">
