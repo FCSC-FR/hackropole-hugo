@@ -126,7 +126,7 @@ explore_challenges = "Explorer les épreuves"
 homepage_lead = """
 Bienvenue sur Hackropole.
 Cette plateforme vous propose de rejouer les épreuves du
-<a class="text-body" href="https://france-cybersecurity-challenge.fr/" target="_blank">France Cybersecurity Challenge</a>
+<a class="text-body" href="https://fcsc.fr/" target="_blank">France Cybersecurity Challenge</a>
 tout au long de l'année dans le but de découvrir et de vous former à divers domaines de la cybersécurité.
 """
 crypto_description = "Analysez et cassez des algorithmes cryptographiques."

@@ -126,7 +126,7 @@ explore_challenges = "Explore challenges"
 homepage_lead = """
 Welcome to Hackropole.
 This platform allows you to replay the challenges of the
-<a class="text-body" href="https://france-cybersecurity-challenge.fr/" target="_blank">France Cybersecurity Challenge</a>
+<a class="text-body" href="https://fcsc.fr/" target="_blank">France Cybersecurity Challenge</a>
 all year round to discover and train in various areas of cybersecurity.
 """
 crypto_description = "Analyze and break cryptographic algorithms."
