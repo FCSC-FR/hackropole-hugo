@@ -5,8 +5,6 @@
 
 {{ $imgs := slice }}
 
-{{ $featured := resources.Get "/img/social-card.png" }}
-
 {{/* Title */}}
 {{ $titleTextOptions := dict
     "color" "#DEE2E6"
@@ -14,29 +12,35 @@
     "lineSpacing" 10
     "x" 40 "y" 35
 }}
-{{ $featured = $featured | images.Filter (images.Text $.LinkTitle $titleTextOptions) }}
+{{ $filters := slice
+  (images.Text $.LinkTitle $titleTextOptions)
+}}
 
 {{ if and (eq .Type "challenges") .IsPage }}
     {{/* Challenge category */}}
     {{ $badge := resources.Get (printf "/img/badges/%s.png" (cast.ToString (index .Params.tags 0))) }}
-    {{ $featured = $featured | images.Filter (images.Overlay $badge 40 300) }}
+    {{ $filters = $filters | append (images.Overlay $badge 40 300) }}
 
     {{/* Challenge difficulty */}}
     {{ $difficulty := .Params.difficulty }}
     {{ if eq 0 $difficulty }}
         {{ $badge := resources.Get "/img/badges/intro.png" }}
-        {{ $featured = $featured | images.Filter (images.Overlay $badge 40 373) }}
+        {{ $filters = $filters | append (images.Overlay $badge 40 373) }}
     {{ else }}
         {{ $star := resources.Get "/img/star.png" }}
         {{ range (seq $difficulty) }}
-        {{ $featured = $featured | images.Filter (images.Overlay $star (sub (mul 80 .) 40) 373) }}
+        {{ $filters = $filters | append (images.Overlay $star (sub (mul 80 .) 40) 373) }}
         {{ end }}
     {{ end }}
 {{ end }}
 
-{{- $imgs = $imgs | append (dict
-    "Image" $featured
-    "RelPermalink" $featured.RelPermalink
-    "Permalink" $featured.Permalink) }}
+{{ with resources.Get "/img/social-card.png" }}
+  {{ with .Filter $filters }}
+    {{ $imgs = $imgs | append (dict
+        "Image" .
+        "RelPermalink" .RelPermalink
+        "Permalink" .Permalink) }}
+  {{ end }}
+{{ end }}
 
 {{- return $imgs }}
