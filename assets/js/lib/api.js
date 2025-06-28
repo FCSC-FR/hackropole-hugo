@@ -21,8 +21,8 @@ export default class HackropoleApi {
 
   /**
    * Call API to get URL for authentication providers
-   * @param {{redirect_uri: String}} params - The parameters needed to resolve the URL
-   * @returns {Promise<{name: String, url: String}[]>} List of providers
+   * @param {{redirect_uri: string}} params - The parameters needed to resolve the URL
+   * @returns {Promise<{name: string, url: string}[]>} List of providers
    */
   static async authorize (params) {
     const response = await fetch(this.apiUrl + '/auth/authorize', {
@@ -145,13 +145,13 @@ export default class HackropoleApi {
   /**
    * Call API to retrieve all user data
    * @returns {Promise<{
-   *   name: String,
-   *   solves: {challenge: String, date: String, flag: String}[],
-   *   solutions_pending: {challenge: String, url: String, date: String}[],
-   *   solutions_rejected: {challenge: String, url: String, date: String}[],
-   *   solutions_accepted: {challenge: String, date: String, uuid: String}[],
-   *   solution_votes: String[],
-   *   challenge_votes: String[]
+   *   name: string,
+   *   solves: {challenge: string, date: string, flag: string}[],
+   *   solutions_pending: {challenge: string, url: string, date: string}[],
+   *   solutions_rejected: {challenge: string, url: string, date: string}[],
+   *   solutions_accepted: {challenge: string, date: string, uuid: string}[],
+   *   solution_votes: string[],
+   *   challenge_votes: string[]
    * }>} User data
    */
   static async getSelfUserData () {
@@ -167,8 +167,8 @@ export default class HackropoleApi {
 
   /**
    * Call API to toggle a vote on a challenge.
-   * @param {String} challenge - Challenge identifier, e.g. "fcsc2019-crypto-2tp"
-   * @returns {Promise<String[]>} List of currently voted challenges
+   * @param {string} challenge - Challenge identifier, e.g. "fcsc2019-crypto-2tp"
+   * @returns {Promise<string[]>} List of currently voted challenges
    */
   static async voteChallenge (challenge) {
     return await this.api('/vote/challenge',
@@ -179,8 +179,8 @@ export default class HackropoleApi {
 
   /**
    * Call API to toggle a vote on a writeup.
-   * @param {String} solution - Write-up UUID
-   * @returns {Promise<String[]>} List of currently voted write-ups
+   * @param {string} solution - Write-up UUID
+   * @returns {Promise<string[]>} List of currently voted write-ups
    */
   static async voteSolution (solution) {
     return await this.api('/vote/solution',
@@ -191,9 +191,9 @@ export default class HackropoleApi {
 
   /**
    * Call API to flag a challenge.
-   * @param {String} challenge - Challenge identifier, e.g. "fcsc2019-crypto-2tp"
-   * @param {String} flag - Flag
-   * @returns {Promise<{challenge: String, date: String, flag: String}[]>} List of flagged challenges
+   * @param {string} challenge - Challenge identifier, e.g. "fcsc2019-crypto-2tp"
+   * @param {string} flag - Flag
+   * @returns {Promise<{challenge: string, date: string, flag: string}[]>} List of flagged challenges
    */
   static async submission (challenge, flag) {
     return await this.api('/submit_flag',
@@ -205,9 +205,9 @@ export default class HackropoleApi {
 
   /**
    * Call API to submit a new writeup for review.
-   * @param {String} challenge - Challenge identifier, e.g. "fcsc2019-crypto-2tp"
-   * @param {String} url - URL to the writeup
-   * @returns {Promise<{challenge: String, url: String, date: String}[]>} List of submitted write-ups in pending state
+   * @param {string} challenge - Challenge identifier, e.g. "fcsc2019-crypto-2tp"
+   * @param {string} url - URL to the writeup
+   * @returns {Promise<{challenge: string, url: string, date: string}[]>} List of submitted write-ups in pending state
    */
   static async submitWriteUp (challenge, url) {
     return await this.api('/submit_solution',

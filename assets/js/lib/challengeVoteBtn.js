@@ -14,15 +14,17 @@ function refreshChallVote () {
   /** @type {String[]} */
   let votes = []
   if (HackropoleApi.isLogged()) {
-    votes = JSON.parse(window.localStorage.getItem('challenge_votes'))
+    votes = JSON.parse(window.localStorage.getItem('challenge_votes') ?? '[]')
   }
   document.querySelectorAll('a.challenge-vote-btn').forEach((el) => {
     if (!(el instanceof HTMLAnchorElement)) {
       return
     }
-    const active = votes.includes(el.dataset.challenge)
+    const active = votes.includes(el.dataset.challenge ?? '')
     el.classList.toggle('text-opacity-25', !active)
-    el.setAttribute('title', active ? el.dataset.titleActive : el.dataset.titleInactive)
+    if (el.dataset.titleActive && el.dataset.titleInactive) {
+      el.setAttribute('title', active ? el.dataset.titleActive : el.dataset.titleInactive)
+    }
     if (el.parentElement instanceof HTMLTableCellElement) {
       el.parentElement.setAttribute('data-sort', active ? '1' : '0')
     }
@@ -41,7 +43,7 @@ window.addEventListener('load', () => {
       event.preventDefault()
       event.stopImmediatePropagation()
       if (HackropoleApi.isLogged()) {
-        const challenge = el.dataset.challenge
+        const challenge = el.dataset.challenge ?? ''
         HackropoleApi.voteChallenge(challenge).then((d) => {
           window.localStorage.setItem('challenge_votes', JSON.stringify(d || []))
           refreshChallVote()

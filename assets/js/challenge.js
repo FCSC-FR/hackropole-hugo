@@ -22,14 +22,16 @@ function refreshFlag (challenge) {
   }
 
   /** @type {{challenge: String, date: String, flag: String}[]} */
-  const flags = JSON.parse(window.localStorage.getItem('flags'))
+  const flags = JSON.parse(window.localStorage.getItem('flags') ?? '[]')
   const filteredFlags = flags.filter((f) => f.challenge === challenge)
   if (filteredFlags.length) {
     // Challenge is already solved, show solve date
-    const el = document.getElementById('badge-flag')
-    const d = new Date(filteredFlags[0].date)
-    el.textContent += d.toLocaleDateString('fr-CA') + ', ' + d.toLocaleTimeString('en-GB')
-    el.classList.remove('d-none')
+    const badgeFlagEl = document.getElementById('badge-flag')
+    if (badgeFlagEl) {
+      const d = new Date(filteredFlags[0].date)
+      badgeFlagEl.textContent += d.toLocaleDateString('fr-CA') + ', ' + d.toLocaleTimeString('en-GB')
+      badgeFlagEl.classList.remove('d-none')
+    }
 
     // Restore flag value
     document.getElementById('flag').value = filteredFlags[0].flag
@@ -39,12 +41,12 @@ function refreshFlag (challenge) {
       e.disabled = true
       e.classList.add('border-success')
     })
-    document.getElementById('social-share').classList.remove('d-none')
+    document.getElementById('social-share')?.classList.remove('d-none')
 
     // Show the writeup submit form
     document.getElementById('solution-form')?.classList.toggle('d-none', !HackropoleApi.isLogged())
     document.getElementById('solution-login-note')?.classList.toggle('d-none', HackropoleApi.isLogged())
-    document.getElementById('submit-solution').classList.remove('d-none')
+    document.getElementById('submit-solution')?.classList.remove('d-none')
 
     // Show all writeups
     const detailWriteups = document.getElementById('details-writeups')
@@ -89,7 +91,7 @@ async function flagSubmit (attemptFlag, challenge, flagsHash, caseInsensitive) {
   if (HackropoleApi.isLogged()) {
     // Send flag to API if it is new and if user is logged in
     /** @type {{challenge: String, date: String, flag: String}[]} */
-    const flags = JSON.parse(window.localStorage.getItem('flags'))
+    const flags = JSON.parse(window.localStorage.getItem('flags') ?? '[]')
     const flaggedChallenges = flags.map((f) => f.challenge)
     if (!flaggedChallenges.includes(challenge)) {
       HackropoleApi.submission(challenge, attemptFlag).then((d) => {
@@ -103,7 +105,7 @@ async function flagSubmit (attemptFlag, challenge, flagsHash, caseInsensitive) {
   } else {
     // If user is not logged in store the flag in local storage only
     /** @type {{challenge: String, date: String, flag: String}[]} */
-    const challenges = JSON.parse(window.localStorage.getItem('flags')) || []
+    const challenges = JSON.parse(window.localStorage.getItem('flags') ?? '[]')
     if (!challenges.filter((f) => f.challenge === challenge).length) {
       challenges.push({
         challenge,
@@ -121,8 +123,8 @@ window.addEventListener('load', () => {
   refreshFlag(challenge)
 
   // User has JavaScript enable, show flag form
-  document.getElementById('flag-form').classList.remove('d-none')
-  document.getElementById('flag-form').addEventListener('submit', (event) => {
+  document.getElementById('flag-form')?.classList.remove('d-none')
+  document.getElementById('flag-form')?.addEventListener('submit', (event) => {
     event.preventDefault()
     const attemptFlag = document.getElementById('flag').value
     const flagsHash = document.getElementById('flag').dataset.flagsHash.split(',')
@@ -146,7 +148,7 @@ window.addEventListener('load', () => {
 
     modal.show()
   })
-  document.getElementById('solution-confirm').addEventListener('click', () => {
+  document.getElementById('solution-confirm')?.addEventListener('click', () => {
     modal.hide()
 
     // Send writeup to API

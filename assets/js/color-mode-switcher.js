@@ -24,9 +24,9 @@ function getPreferredTheme () {
 function showActiveTheme (theme) {
   const activeThemeIcon = document.querySelector('.theme-switch svg use')
   if (theme === 'dark') {
-    activeThemeIcon.setAttribute('href', '#moon-stars-fill')
+    activeThemeIcon?.setAttribute('href', '#moon-stars-fill')
   } else {
-    activeThemeIcon.setAttribute('href', '#sun-fill')
+    activeThemeIcon?.setAttribute('href', '#sun-fill')
   }
 }
 

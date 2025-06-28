@@ -17,14 +17,15 @@ export const STORAGE_VERSION = '1'
  * Fill login dropdown using providers from session storage
  */
 function fillLogin () {
-  const providers = JSON.parse(window.sessionStorage.getItem('providers'))
+  /** @type {{url: string, name: string}[]} */
+  const providers = JSON.parse(window.sessionStorage.getItem('providers') ?? '[]')
   const menu = document.getElementById('login-providers')
-  menu.querySelector('div').classList.add('d-none')
-  menu.querySelector('ul').classList.remove('d-none')
+  menu?.querySelector('div')?.classList.add('d-none')
+  menu?.querySelector('ul')?.classList.remove('d-none')
   providers.forEach((provider) => {
     const li = document.createElement('li')
     const a = document.createElement('a')
-    const text = document.createTextNode(`${menu.dataset.prefix}${provider.name}`)
+    const text = document.createTextNode(`${menu?.dataset.prefix}${provider.name}`)
     const bi = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
     const icon = document.createElementNS('http://www.w3.org/2000/svg', 'use')
     icon.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + provider.name.toLowerCase().replace(/[^a-z0-9_]+/g, '_'))
@@ -37,12 +38,13 @@ function fillLogin () {
     a.appendChild(bi)
     a.appendChild(text)
     li.appendChild(a)
-    menu.querySelector('ul').appendChild(li)
+    menu?.querySelector('ul')?.appendChild(li)
   })
 }
 
 /**
  * Fetch login providers from API into session storage
+ * @param {string} redirectUri
  */
 async function queryLogin (redirectUri) {
   const d = await HackropoleApi.authorize({ redirect_uri: redirectUri })
@@ -50,18 +52,18 @@ async function queryLogin (redirectUri) {
   window.sessionStorage.setItem('providers_redirect_uri', redirectUri)
 }
 
-document.getElementById('btn-logout').addEventListener('click', (e) => {
+document.getElementById('btn-logout')?.addEventListener('click', (e) => {
   e.preventDefault()
   HackropoleApi.logout()
 })
 
-const redirectUri = document.getElementById('menu-login').dataset.redirectUri
+const redirectUri = document.getElementById('menu-login')?.dataset.redirectUri
 if (sessionStorage.getItem('providers_redirect_uri') === redirectUri) {
   fillLogin() // already cached, fill dropdown
-} else {
-  // Wait for dropdown
+} else if (redirectUri) {
+  // Query API for auth providers when menu first open
   // Use animationstart event to detect opened menu, this is simpler than trying to map click, touch and keyboard events
-  document.querySelector('#menu-login .spinner-border').addEventListener('animationstart', () => {
+  document.querySelector('#menu-login .spinner-border')?.addEventListener('animationstart', () => {
     queryLogin(redirectUri).then(() => fillLogin()).catch(() => {
       const toast = new Toast(document.getElementById('toast-api-error'))
       toast.show()
@@ -74,8 +76,8 @@ if (HackropoleApi.isLogged() && localStorage.getItem('version') !== STORAGE_VERS
 }
 
 // Update menu status
-document.getElementById('menu-login').classList.toggle('d-none', HackropoleApi.isLogged())
-document.getElementById('menu-account').classList.toggle('d-none', !HackropoleApi.isLogged())
+document.getElementById('menu-login')?.classList.toggle('d-none', HackropoleApi.isLogged())
+document.getElementById('menu-account')?.classList.toggle('d-none', !HackropoleApi.isLogged())
 
 // Search engine
 const indexUrl = `${window.location.origin}/${location.pathname.split('/')[1]}/index.json`
@@ -131,39 +133,36 @@ export const searchAutocomplete = new AutoComplete({
     highlight: true
   }
 })
-document.querySelector('#challenges-search').addEventListener('selection', function (event) {
+document.querySelector('#challenges-search')?.addEventListener('selection', function (event) {
   window.location = event.detail.selection.value.uri
 })
 
 // Focus search bar when pressing `/` outside of an input
 document.addEventListener('keydown', (e) => {
-  if (e.target.tagName === 'INPUT' || e.repeat || e.ctrlKey) {
+  if ((e.target instanceof HTMLElement && e.target.tagName === 'INPUT') || e.repeat || e.ctrlKey) {
     // ignore input fields or key repeat
   } else if (e.key === '/') {
-    document.getElementById('challenges-search').select()
+    document.getElementById('challenges-search')?.focus()
     e.preventDefault()
   } else if (e.key === 't') {
-    document.querySelector('.theme-switch').click()
+    document.querySelector('.theme-switch')?.dispatchEvent(new MouseEvent('click'))
     e.preventDefault()
   }
 })
 
 document.querySelectorAll('[data-countdown]').forEach(el => {
-  const countDownDate = new Date(parseInt(el.dataset.countdown)).getTime()
+  const countDownDate = (el instanceof HTMLElement) ? new Date(parseInt(el.dataset.countdown ?? '0')).getTime() : 0
   const updateTimer = () => {
     const now = new Date().getTime()
     const dist = countDownDate - now
-    if (dist >= 0) {
-      el.querySelector('.countdown-day').textContent = Math.floor(dist / 86400000)
-      el.querySelector('.countdown-hour').textContent = String(Math.floor((dist % 86400000) / 3600000)).padStart(2, '0')
-      el.querySelector('.countdown-min').textContent = String(Math.floor((dist % 3600000) / 60000)).padStart(2, '0')
-      el.querySelector('.countdown-sec').textContent = String(Math.floor((dist % 60000) / 1000)).padStart(2, '0')
-    } else {
-      el.querySelector('.countdown-day').textContent = '0'
-      el.querySelector('.countdown-hour').textContent = '00'
-      el.querySelector('.countdown-min').textContent = '00'
-      el.querySelector('.countdown-sec').textContent = '00'
-    }
+    const countdownDay = el.querySelector('.countdown-day')
+    const countdownHour = el.querySelector('.countdown-hour')
+    const countdownMin = el.querySelector('.countdown-min')
+    const countdownSec = el.querySelector('.countdown-sec')
+    if (countdownDay) { countdownDay.textContent = (dist >= 0) ? String(Math.floor(dist / 86400000)) : '0' }
+    if (countdownHour) { countdownHour.textContent = (dist >= 0) ? String(Math.floor((dist % 86400000) / 3600000)).padStart(2, '0') : '00' }
+    if (countdownMin) { countdownMin.textContent = (dist >= 0) ? String(Math.floor((dist % 3600000) / 60000)).padStart(2, '0') : '00' }
+    if (countdownSec) { countdownSec.textContent = (dist >= 0) ? String(Math.floor((dist % 60000) / 1000)).padStart(2, '0') : '00' }
   }
   setInterval(updateTimer, 500)
   updateTimer()

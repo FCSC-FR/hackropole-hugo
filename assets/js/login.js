@@ -31,6 +31,9 @@ async function login () {
 
 window.addEventListener('load', () => {
   login().catch((error) => {
-    document.getElementById('error').textContent = `${error}`
+    const errorEl = document.getElementById('error')
+    if (errorEl) {
+      errorEl.textContent = `${error}`
+    }
   })
 })

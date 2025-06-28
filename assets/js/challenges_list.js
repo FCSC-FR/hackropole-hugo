@@ -17,13 +17,13 @@ function refreshFlags () {
   }
 
   /** @type {{challenge: String, date: String, flag: String}[]} */
-  const flags = JSON.parse(window.localStorage.getItem('flags'))
+  const flags = JSON.parse(window.localStorage.getItem('flags') ?? '[]')
   flags.forEach((flag) => {
     document.querySelectorAll(`[data-challenge="${flag.challenge}"] .badge-flag`).forEach((el) => {
       const d = new Date(flag.date)
       el.textContent = d.toLocaleDateString('fr-CA') + ', ' + d.toLocaleTimeString('en-GB')
       el.classList.remove('invisible')
-      el.closest('td').setAttribute('data-sort', flag.date)
+      el.closest('td')?.setAttribute('data-sort', flag.date)
     })
   })
 }
