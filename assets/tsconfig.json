@@ -1,0 +1,19 @@
+// Copyright (C) 2023-2024  ANSSI
+// SPDX-License-Identifier: MIT
+// This files configures 'tsc' for type checking JavaScript
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "strict": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": true,
+        "alwaysStrict": true,
+        "allowSyntheticDefaultImports": true,
+        "checkJs": true,
+        "allowJs": true,
+        "module": "es2022",
+        "target": "es2017",
+        "noEmit": true
+    }
+}
