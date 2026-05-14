@@ -5,13 +5,16 @@
 
 {{ define "main" }}
 <div class="jumbotron py-4 mb-3 text-center">
-  <h1 class="fw-light">{{ i18n "dashboard_of" }} <span id="username-title"></span></h1>
+  <h1 class="fw-light" id="dashboard-title" data-username-prefix="{{ i18n "dashboard_of" }}">{{ i18n "dashboard" }}</h1>
 </div>
 
 <main class="container">
   <div class="text-end">
-    <button id="refresh" type="button" class="btn btn-secondary"><svg class="bi" aria-hidden="true"><use xlink:href="#arrow-clockwise"></use></svg></button>
+    <button id="refresh" type="button" class="btn btn-secondary d-none"><svg class="bi" aria-hidden="true"><use xlink:href="#arrow-clockwise"></use></svg></button>
   </div>
+  <p id="warning-offline" class="fw-semibold text-body-emphasis d-none" role="alert">
+      ⚠️ Attention ! Votre progression ne sera pas automatiquement sauvegardée si vous continuez de jouer sans vous connecter à votre compte.
+  </p>
   <h4><svg class="bi me-2"><use href="#flag-fill"></use></svg>{{ i18n "allvalidations" }}</h4>
   {{- $challenges := where .Site.RegularPages "Section" "challenges" }}
   {{- $writeups := where (where .Site.AllPages "Section" "writeups") "Kind" "page" }}
@@ -27,7 +30,7 @@
     {{ partial "solution_list.html" (dict "pages" $writeups "tableId" "votes-solutions" "hasChallenge" true) }}
   </div>
   <a id="download-data" href="#" class="link-secondary text-decoration-none"><svg class="bi" aria-hidden="true"><use xlink:href="#download"></use></svg> {{ i18n "download_account" }}</a><br />
-  <a id="delete" href="#" class="link-danger text-decoration-none"><svg class="bi" aria-hidden="true"><use xlink:href="#trash-fill"></use></svg> {{ i18n "delete_account" }}</a>
+  <a id="delete" href="#" class="link-danger text-decoration-none d-none"><svg class="bi" aria-hidden="true"><use xlink:href="#trash-fill"></use></svg> {{ i18n "delete_account" }}</a>
 </main>
 
 <div class="modal fade" id="modal-delete" tabindex="-1" role="dialog" aria-labelledby="modal-deleteLabel" aria-hidden="true">
@@ -51,6 +54,6 @@
 {{ end }}
 
 {{ define "javascript" }}
-{{- $js := resources.Get "js/dashboard.js" | js.Build (dict "minify" hugo.IsProduction "params" (dict "api" .Site.Params.API_PATH "home_url" (relLangURL "/"))) | fingerprint }}
+{{- $js := resources.Get "js/dashboard.js" | js.Build (dict "minify" hugo.IsProduction "params" (dict "api" .Site.Params.API_PATH)) | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
 {{ end }}
