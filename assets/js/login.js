@@ -4,7 +4,7 @@
 // Copyright (C) 2023-2024  ANSSI
 // SPDX-License-Identifier: MIT
 
-import { STORAGE_VERSION } from './lib/common.js'
+import { importUserData } from './lib/common.js'
 import * as params from '@params'
 import HackropoleApi from './lib/api.js'
 
@@ -18,14 +18,7 @@ async function login () {
   }
   await HackropoleApi.login(Object.fromEntries(urlParams.entries()))
   const userData = await HackropoleApi.getSelfUserData()
-  window.localStorage.setItem('username', userData.name)
-  window.localStorage.setItem('flags', JSON.stringify(userData.solves))
-  window.localStorage.setItem('solutions_pending', JSON.stringify(userData.solutions_pending))
-  window.localStorage.setItem('solutions_rejected', JSON.stringify(userData.solutions_rejected))
-  window.localStorage.setItem('solutions_accepted', JSON.stringify(userData.solutions_accepted))
-  window.localStorage.setItem('challenge_votes', JSON.stringify(userData.challenge_votes))
-  window.localStorage.setItem('solution_votes', JSON.stringify(userData.solution_votes))
-  window.localStorage.setItem('version', STORAGE_VERSION)
+  await importUserData(userData)
   document.location = params.dashboard_url
 }
 

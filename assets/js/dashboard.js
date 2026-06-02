@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: MIT
 
 import './lib/sortable.js'
-import './lib/common.js'
+import { importUserData } from './lib/common.js'
 import './lib/challengeVoteBtn.js'
 import './lib/writeupVoteBtn.js'
 import Modal from './vendor/bootstrap/modal.js'
@@ -115,14 +115,7 @@ window.addEventListener('load', () => {
     refreshButton?.classList.remove('d-none')
     refreshButton?.addEventListener('click', (event) => {
       event.preventDefault()
-      HackropoleApi.getSelfUserData().then((userData) => {
-        window.localStorage.setItem('username', userData.name)
-        window.localStorage.setItem('flags', JSON.stringify(userData.solves))
-        window.localStorage.setItem('solutions_pending', JSON.stringify(userData.solutions_pending))
-        window.localStorage.setItem('solutions_rejected', JSON.stringify(userData.solutions_rejected))
-        window.localStorage.setItem('solutions_accepted', JSON.stringify(userData.solutions_accepted))
-        window.localStorage.setItem('challenge_votes', JSON.stringify(userData.challenge_votes))
-        window.localStorage.setItem('solution_votes', JSON.stringify(userData.solution_votes))
+      HackropoleApi.getSelfUserData().then(importUserData).then(() => {
         document.location.reload()
       }).catch(() => {
         const toast = new Toast(document.getElementById('toast-api-error'))

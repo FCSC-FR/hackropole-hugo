@@ -10,7 +10,7 @@ import HackropoleApi from './api.js'
 /**
  * This has to be changed when local storage data changes
  */
-export const STORAGE_VERSION = '1'
+const STORAGE_VERSION = '1'
 
 /**
  * Fill login dropdown using providers from session storage
@@ -45,6 +45,40 @@ function fillLogin () {
     li.appendChild(a)
     menu?.querySelector('ul')?.appendChild(li)
   })
+}
+
+/**
+ * Import user data to local storage, and submit new flags if logged in
+ * @param {{
+ *   name: string,
+ *   solves: {challenge: string, date: string, flag: string}[],
+ *   solutions_pending: {challenge: string, url: string, date: string}[],
+ *   solutions_rejected: {challenge: string, url: string, date: string}[],
+ *   solutions_accepted: {challenge: string, date: string, uuid: string}[],
+ *   solution_votes: string[],
+ *   challenge_votes: string[]
+ * }} newUserData - User data to merge
+ */
+export async function importUserData (newUserData) {
+  /** @type {{challenge: String, date: String, flag: String}[]} */
+  const previousFlags = JSON.parse(window.localStorage.getItem('flags') ?? '[]')
+
+  // Submit previous flags, player might have played offline before reconnecting
+  let newFlags = newUserData.solves
+  if (HackropoleApi.isLogged() && previousFlags.length) {
+    for (const fl of previousFlags) {
+      newFlags = await HackropoleApi.submission(fl.challenge, fl.flag)
+    }
+  }
+
+  window.localStorage.setItem('username', newUserData.name)
+  window.localStorage.setItem('flags', JSON.stringify(newFlags))
+  window.localStorage.setItem('solutions_pending', JSON.stringify(newUserData.solutions_pending))
+  window.localStorage.setItem('solutions_rejected', JSON.stringify(newUserData.solutions_rejected))
+  window.localStorage.setItem('solutions_accepted', JSON.stringify(newUserData.solutions_accepted))
+  window.localStorage.setItem('challenge_votes', JSON.stringify(newUserData.challenge_votes))
+  window.localStorage.setItem('solution_votes', JSON.stringify(newUserData.solution_votes))
+  window.localStorage.setItem('version', STORAGE_VERSION)
 }
 
 document.getElementById('btn-logout')?.addEventListener('click', (e) => {

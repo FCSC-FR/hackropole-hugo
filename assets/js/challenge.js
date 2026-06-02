@@ -17,10 +17,6 @@ import HackropoleApi from './lib/api.js'
  * @param {string} challenge - Challenge identifier, e.g. "fcsc2019-crypto-2tp"
  */
 function refreshFlag (challenge) {
-  if (!('flags' in window.localStorage)) {
-    return // user is not logged in or has never submitted a flag
-  }
-
   /** @type {{challenge: String, date: String, flag: String}[]} */
   const flags = JSON.parse(window.localStorage.getItem('flags') ?? '[]')
   const filteredFlags = flags.filter((f) => f.challenge === challenge)
