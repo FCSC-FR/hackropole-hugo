@@ -67,6 +67,9 @@ export async function importUserData (newUserData) {
   let newFlags = newUserData.solves
   if (HackropoleApi.isLogged() && previousFlags.length) {
     for (const fl of previousFlags) {
+      if (newFlags.map(f => f.challenge).includes(fl.challenge)) {
+        continue // already validated
+      }
       newFlags = await HackropoleApi.submission(fl.challenge, fl.flag)
     }
   }
@@ -95,12 +98,14 @@ if (sessionStorage.getItem('providers_redirect_uri') === redirectUri) {
   document.querySelector('#menu-login .spinner-border')?.addEventListener('animationstart', () => {
     HackropoleApi.authorize({ redirect_uri: redirectUri }).then(d => {
       window.sessionStorage.setItem('providers', JSON.stringify(d))
+      window.sessionStorage.setItem('providers_redirect_uri', redirectUri)
+      fillLogin()
     }).catch(() => {
       console.log('Unable to fetch providers from API, switching to local-only mode')
       window.sessionStorage.setItem('providers', '[]')
+      window.sessionStorage.setItem('providers_redirect_uri', redirectUri)
+      fillLogin()
     })
-    window.sessionStorage.setItem('providers_redirect_uri', redirectUri)
-    fillLogin()
   }, { once: true })
 }
 
