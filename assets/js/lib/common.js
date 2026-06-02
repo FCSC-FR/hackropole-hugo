@@ -6,7 +6,6 @@
 import AutoComplete from '../vendor/autoComplete.min.js'
 import '../vendor/bootstrap/collapse.js'
 import HackropoleApi from './api.js'
-import Toast from '../vendor/bootstrap/toast.js'
 
 /**
  * This has to be changed when local storage data changes
@@ -22,6 +21,12 @@ function fillLogin () {
   const menu = document.getElementById('login-providers')
   menu?.querySelector('div')?.classList.add('d-none')
   menu?.querySelector('ul')?.classList.remove('d-none')
+  if (providers.length === 0) {
+    const li = document.createElement('li')
+    li.classList.add('dropdown-item')
+    li.textContent = 'API not available'
+    menu?.querySelector('ul')?.appendChild(li)
+  }
   providers.forEach((provider) => {
     const li = document.createElement('li')
     const a = document.createElement('a')
@@ -42,16 +47,6 @@ function fillLogin () {
   })
 }
 
-/**
- * Fetch login providers from API into session storage
- * @param {string} redirectUri
- */
-async function queryLogin (redirectUri) {
-  const d = await HackropoleApi.authorize({ redirect_uri: redirectUri })
-  window.sessionStorage.setItem('providers', JSON.stringify(d))
-  window.sessionStorage.setItem('providers_redirect_uri', redirectUri)
-}
-
 document.getElementById('btn-logout')?.addEventListener('click', (e) => {
   e.preventDefault()
   HackropoleApi.logout()
@@ -64,10 +59,14 @@ if (sessionStorage.getItem('providers_redirect_uri') === redirectUri) {
   // Query API for auth providers when menu first open
   // Use animationstart event to detect opened menu, this is simpler than trying to map click, touch and keyboard events
   document.querySelector('#menu-login .spinner-border')?.addEventListener('animationstart', () => {
-    queryLogin(redirectUri).then(() => fillLogin()).catch(() => {
-      const toast = new Toast(document.getElementById('toast-api-error'))
-      toast.show()
+    HackropoleApi.authorize({ redirect_uri: redirectUri }).then(d => {
+      window.sessionStorage.setItem('providers', JSON.stringify(d))
+    }).catch(() => {
+      console.log('Unable to fetch providers from API, switching to local-only mode')
+      window.sessionStorage.setItem('providers', '[]')
     })
+    window.sessionStorage.setItem('providers_redirect_uri', redirectUri)
+    fillLogin()
   }, { once: true })
 }
 
