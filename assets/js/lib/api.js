@@ -86,7 +86,10 @@ export default class HackropoleApi {
    * refresh the token.
    */
   static async refresh () {
-    const auth = JSON.parse(window.localStorage.getItem('auth'))
+    const auth = JSON.parse(window.localStorage.getItem('auth') ?? '{}')
+    if (!auth) {
+      throw Error('User is not logged in, can\'t refresh')
+    }
     const response = await fetch(this.apiUrl + '/auth/refresh', {
       method: 'post',
       headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -112,7 +115,10 @@ export default class HackropoleApi {
    * @returns {Promise<any>} The API call result
    */
   static async api (ep, params = {}, hasData = true) {
-    const auth = JSON.parse(window.localStorage.getItem('auth'))
+    const auth = JSON.parse(window.localStorage.getItem('auth') ?? '{}')
+    if (!auth) {
+      return {}
+    }
     const headers = new Headers({ 'Content-Type': 'application/json' })
     let response = await fetch(this.apiUrl + ep, {
       method: 'post',
@@ -162,9 +168,7 @@ export default class HackropoleApi {
    * Call API to delete all user data
    */
   static async deleteUserData () {
-    if ('auth' in window.localStorage) {
-      await this.api('/user/delete', {}, false)
-    }
+    await this.api('/user/delete', {}, false)
   }
 
   /**
@@ -173,10 +177,7 @@ export default class HackropoleApi {
    * @returns {Promise<string[]>} List of currently voted challenges
    */
   static async voteChallenge (challenge) {
-    return await this.api('/vote/challenge',
-      {
-        challenge
-      })
+    return await this.api('/vote/challenge', { challenge })
   }
 
   /**
@@ -185,10 +186,7 @@ export default class HackropoleApi {
    * @returns {Promise<string[]>} List of currently voted write-ups
    */
   static async voteSolution (solution) {
-    return await this.api('/vote/solution',
-      {
-        solution
-      })
+    return await this.api('/vote/solution', { solution })
   }
 
   /**
@@ -198,11 +196,7 @@ export default class HackropoleApi {
    * @returns {Promise<{challenge: string, date: string, flag: string}[]>} List of flagged challenges
    */
   static async submission (challenge, flag) {
-    return await this.api('/submit_flag',
-      {
-        challenge,
-        flag
-      })
+    return await this.api('/submit_flag', { challenge, flag })
   }
 
   /**
@@ -212,10 +206,6 @@ export default class HackropoleApi {
    * @returns {Promise<{challenge: string, url: string, date: string}[]>} List of submitted write-ups in pending state
    */
   static async submitWriteUp (challenge, url) {
-    return await this.api('/submit_solution',
-      {
-        challenge,
-        url
-      })
+    return await this.api('/submit_solution', { challenge, url })
   }
 }
