@@ -159,23 +159,21 @@ window.addEventListener('load', () => {
   })
 
   // 'Delete my user data' button, with confirmation modal
-  if (HackropoleApi.isLogged()) {
-    const modal = new Modal('#modal-delete', {})
-    const deleteLink = document.getElementById('delete')
-    deleteLink?.classList.remove('d-none')
-    deleteLink?.addEventListener('click', (event) => {
-      event.preventDefault()
-      modal.show()
-    })
+  const modal = new Modal('#modal-delete', {})
+  const deleteLink = document.getElementById('delete')
+  deleteLink?.addEventListener('click', (event) => {
+    event.preventDefault()
+    modal.show()
+  })
 
-    document.getElementById('delete-confirm')?.addEventListener('click', () => {
-      modal.hide()
-      HackropoleApi.deleteUserData().then(() => HackropoleApi.logout()).catch(() => {
-        const toast = new Toast(document.getElementById('toast-api-error'))
-        toast.show()
-      })
+  document.getElementById('delete-confirm')?.addEventListener('click', () => {
+    modal.hide()
+    HackropoleApi.deleteUserData().then(() => HackropoleApi.logout()).catch(() => {
+      const toast = new Toast(document.getElementById('toast-api-error'))
+      toast.show()
     })
-  } else {
+  })
+  if (!HackropoleApi.isLogged()) {
     document.getElementById('warning-offline')?.classList.remove('d-none')
   }
 

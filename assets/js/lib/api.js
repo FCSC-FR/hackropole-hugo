@@ -162,7 +162,9 @@ export default class HackropoleApi {
    * Call API to delete all user data
    */
   static async deleteUserData () {
-    await this.api('/user/delete', {}, false)
+    if ('auth' in window.localStorage) {
+      await this.api('/user/delete', {}, false)
+    }
   }
 
   /**
