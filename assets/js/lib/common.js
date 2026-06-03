@@ -48,6 +48,25 @@ function fillLogin () {
 }
 
 /**
+ * Submit previous flags and return new state
+ * @param {{challenge: string, date: string, flag: string}[]} newFlags - New flags
+ * @returns {Promise<{challenge: string, date: string, flag: string}[]>} New flags
+ */
+export async function importFlags(newFlags) {
+  /** @type {{challenge: String, date: String, flag: String}[]} */
+  const previousFlags = JSON.parse(window.localStorage.getItem('flags') ?? '[]')
+  if (HackropoleApi.isLogged() && previousFlags.length) {
+    for (const fl of previousFlags) {
+      if (newFlags.map(f => f.challenge).includes(fl.challenge)) {
+        continue // already validated
+      }
+      newFlags = await HackropoleApi.submission(fl.challenge, fl.flag)
+    }
+  }
+  return newFlags
+}
+
+/**
  * Import user data to local storage, and submit new flags if logged in
  * @param {{
  *   name: string,
@@ -59,21 +78,8 @@ function fillLogin () {
  *   challenge_votes: string[]
  * }} newUserData - User data to merge
  */
-export async function importUserData (newUserData) {
-  /** @type {{challenge: String, date: String, flag: String}[]} */
-  const previousFlags = JSON.parse(window.localStorage.getItem('flags') ?? '[]')
-
-  // Submit previous flags, player might have played offline before reconnecting
-  let newFlags = newUserData.solves
-  if (HackropoleApi.isLogged() && previousFlags.length) {
-    for (const fl of previousFlags) {
-      if (newFlags.map(f => f.challenge).includes(fl.challenge)) {
-        continue // already validated
-      }
-      newFlags = await HackropoleApi.submission(fl.challenge, fl.flag)
-    }
-  }
-
+export async function importUserData(newUserData) {
+  const newFlags = await importFlags(newUserData.solves)
   window.localStorage.setItem('username', newUserData.name)
   window.localStorage.setItem('flags', JSON.stringify(newFlags))
   window.localStorage.setItem('solutions_pending', JSON.stringify(newUserData.solutions_pending))

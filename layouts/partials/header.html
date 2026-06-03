@@ -71,6 +71,12 @@
             <span class="d-md-none ms-2">{{ i18n "toggle_theme" }}</span>
           </button>
         </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex" href="{{ relLangURL "/dashboard/" }}" title="{{ i18n "dashboard" }}">
+            <svg class="bi my-1" aria-hidden="true"><use href="#graph-up-arrow"></use></svg>
+            <span class="d-md-none ms-2">{{ i18n "dashboard" }}</span>
+          </a>
+        </li>
         <li class="nav-item dropdown" id="menu-login" data-redirect-uri="{{ absLangURL "/login/" }}">
           <button class="nav-link py-2 dropdown-toggle d-flex align-items-center" type="button" aria-label="{{- i18n "menu_login" | title -}}">
             <svg class="bi my-1" aria-hidden="true"><use href="#box-arrow-in-right"></use></svg>

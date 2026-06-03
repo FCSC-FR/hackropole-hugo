@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: MIT
 
 import './lib/sortable.js'
-import { importUserData } from './lib/common.js'
+import { importFlags, importUserData } from './lib/common.js'
 import './lib/challengeVoteBtn.js'
 import './lib/writeupVoteBtn.js'
 import Modal from './vendor/bootstrap/modal.js'
@@ -109,6 +109,31 @@ function refreshVotes () {
   }
 }
 
+/**
+ * Handle uploaded file to load new flags
+ * @param {File} file - Uploaded file
+ */
+function uploadData (file) {
+  const reader = new FileReader()
+  reader.readAsText(file)
+  reader.addEventListener('load', re => {
+    const jsonData = re.target?.result
+    if (typeof jsonData !== 'string') {
+      console.log('Uploaded file is not UTF-8')
+      return
+    }
+    const data = JSON.parse(jsonData)
+    if (!data.solves) {
+      console.log('JSON does not contain solves')
+      return
+    }
+    importFlags(data.solves).then(newFlags => {
+      window.localStorage.setItem('flags', JSON.stringify(newFlags))
+      window.location.reload()
+    })
+  })
+}
+
 window.addEventListener('load', () => {
   if (HackropoleApi.isLogged()) {
     const refreshButton = document.getElementById('refresh')
@@ -149,6 +174,15 @@ window.addEventListener('load', () => {
     document.body.appendChild(a)
     a.click()
     window.URL.revokeObjectURL(url)
+  })
+
+  // Upload data button only imports flagged challenges
+  document.getElementById('upload-data')?.addEventListener('click', (event) => {
+    event.preventDefault()
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.addEventListener('change', e => uploadData(e.target?.files.item(0)))
+    input.click()
   })
 
   // 'Delete my user data' button, with confirmation modal

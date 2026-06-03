@@ -85,11 +85,12 @@ export default class HackropoleApi {
    * This function may never return as it refreshes the window if unable to
    * refresh the token.
    */
-  static async refresh () {
-    const auth = JSON.parse(window.localStorage.getItem('auth') ?? '{}')
-    if (!auth) {
+  static async refresh() {
+    const authJson = window.localStorage.getItem('auth')
+    if (!authJson) {
       throw Error('User is not logged in, can\'t refresh')
     }
+    const auth = JSON.parse(authJson)
     const response = await fetch(this.apiUrl + '/auth/refresh', {
       method: 'post',
       headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -115,10 +116,11 @@ export default class HackropoleApi {
    * @returns {Promise<any>} The API call result
    */
   static async api (ep, params = {}, hasData = true) {
-    const auth = JSON.parse(window.localStorage.getItem('auth') ?? '{}')
-    if (!auth) {
+    const authJson = window.localStorage.getItem('auth')
+    if (!authJson) {
       return {}
     }
+    const auth = JSON.parse(authJson)
     const headers = new Headers({ 'Content-Type': 'application/json' })
     let response = await fetch(this.apiUrl + ep, {
       method: 'post',
