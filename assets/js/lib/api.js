@@ -85,7 +85,7 @@ export default class HackropoleApi {
    * This function may never return as it refreshes the window if unable to
    * refresh the token.
    */
-  static async refresh() {
+  static async refresh () {
     const authJson = window.localStorage.getItem('auth')
     if (!authJson) {
       throw Error('User is not logged in, can\'t refresh')

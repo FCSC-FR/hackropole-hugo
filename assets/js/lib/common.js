@@ -52,7 +52,7 @@ function fillLogin () {
  * @param {{challenge: string, date: string, flag: string}[]} newFlags - New flags
  * @returns {Promise<{challenge: string, date: string, flag: string}[]>} New flags
  */
-export async function importFlags(newFlags) {
+export async function importFlags (newFlags) {
   /** @type {{challenge: String, date: String, flag: String}[]} */
   const previousFlags = JSON.parse(window.localStorage.getItem('flags') ?? '[]')
   if (HackropoleApi.isLogged() && previousFlags.length) {
@@ -78,7 +78,7 @@ export async function importFlags(newFlags) {
  *   challenge_votes: string[]
  * }} newUserData - User data to merge
  */
-export async function importUserData(newUserData) {
+export async function importUserData (newUserData) {
   const newFlags = await importFlags(newUserData.solves)
   window.localStorage.setItem('username', newUserData.name)
   window.localStorage.setItem('flags', JSON.stringify(newFlags))
